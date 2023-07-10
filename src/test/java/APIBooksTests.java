@@ -3,6 +3,8 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.response.Response;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class APIBooksTests {
@@ -25,16 +27,25 @@ public class APIBooksTests {
                 .addHeader("Content-Type", "application/json")
                 .addCookie("token", authToken)
                 .build();
+
+        Response getAllResponse = RestAssured.given().log().all().get("/booking");
+        getAllResponse.then().statusCode(200);
+        getAllResponse.prettyPrint();
+
+        List<Integer> bookingIdsList = getAllResponse.jsonPath().getList("bookingid");
+        if (!bookingIdsList.isEmpty()) {
+            bookingId = bookingIdsList.get(0);
+        }
     }
     @Test
     public void createBookingTest() {
-        BookingDates bookingDates = new BookingDates("2023-07-01","2023-07-05");
+        BookingDates bookingdates = new BookingDates("2023-07-01","2023-07-05");
         HelperBookingBody body = new HelperBookingBody().builder()
                 .firstname("testName")
                 .lastname("testLastName")
                 .totalprice(1000)
                 .depositpaid(true)
-                .Date(bookingDates)
+                .bookingdates(bookingdates)
                 .additionalneeds("test")
                 .build();
 
@@ -47,12 +58,10 @@ public class APIBooksTests {
 
     @Test
     public void getAllBookingIdTest() {
-        Response response = RestAssured.given().log().all().get("/booking");
-        response.then().statusCode(200);
-        response.prettyPrint();
-
-        List<Integer> bookingIdsList = response.jsonPath().getList("bookingid");
-        bookingId = bookingIdsList.get(0);
+        List<Integer> bookingIdsList = new ArrayList<>();
+        if (!bookingIdsList.isEmpty()) {
+            bookingId = bookingIdsList.get(0);
+        }
         for (int id : bookingIdsList) {
             System.out.println("bookingId:" + id);
         }
@@ -71,13 +80,13 @@ public class APIBooksTests {
 
     @Test
     public void updateBookingTest() {
-        BookingDates bookingDates = new BookingDates("2023-07-01","2023-07-05");
+        BookingDates bookingdates = new BookingDates("2023-07-01","2023-07-05");
         HelperBookingBody body = new HelperBookingBody().builder()
                 .firstname("newName")
                 .lastname("newLastName")
                 .totalprice(111)
                 .depositpaid(true)
-                .Date(bookingDates)
+                .bookingdates(bookingdates)
                 .additionalneeds("newTest")
                 .build();
 

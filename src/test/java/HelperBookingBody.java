@@ -12,6 +12,6 @@ public class HelperBookingBody {
     private String lastname;
     private int totalprice;
     private Boolean depositpaid;
-    private BookingDates Date;
+    private BookingDates bookingdates;
     private String additionalneeds;
 }
